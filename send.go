@@ -1,12 +1,13 @@
-package go_teams_notify
+package goteamsnotify
 
 import (
 	"bytes"
 	"encoding/json"
+	"errors"
 	"log"
 	"net/http"
-
-	"github.com/pkg/errors"
+	"net/url"
+	"strings"
 )
 
 type message struct {
@@ -15,21 +16,21 @@ type message struct {
 	ThemeColor string `json:"themeColor,omitempty"`
 }
 
-// Send - will post a notification to MS Teams incomingWebhookUrl
-func Send(incomingWebhookUrl string, webhookMessage message) error {
-	// ToDo validate url
+// Send - will post a notification to MS Teams incomingWebhookURL
+func Send(incomingWebhookURL string, webhookMessage message) error {
+	// validate url
 	// needs to look like: https://outlook.office.com/webhook/xxx
-
-	// validate notification
-	webhookMessageByte, err := json.Marshal(webhookMessage)
-	if err != nil {
+	valid, err := isValidWebhookURL(incomingWebhookURL)
+	if valid != true {
 		return err
 	}
+
 	// ToDo set defaults - e.g. ThemeColor
 
 	// send notification
+	webhookMessageByte, _ := json.Marshal(webhookMessage)
 	webhookMessageBuffer := bytes.NewBuffer(webhookMessageByte)
-	res, err := http.Post(incomingWebhookUrl, "application/json", webhookMessageBuffer)
+	res, err := http.Post(incomingWebhookURL, "application/json", webhookMessageBuffer)
 	if err != nil {
 		return err
 	}
@@ -40,4 +41,19 @@ func Send(incomingWebhookUrl string, webhookMessage message) error {
 	}
 
 	return nil
+}
+
+func isValidWebhookURL(webhookURL string) (bool, error) {
+	// basic URL check
+	_, err := url.Parse(webhookURL)
+	if err != nil {
+		return false, err
+	}
+	// only pass MS teams webhook URLs
+	hasPrefix := strings.HasPrefix(webhookURL, "https://outlook.office.com/webhook/")
+	if hasPrefix != true {
+		err = errors.New("unvalid ms teams webhook url")
+		return false, err
+	}
+	return true, nil
 }
