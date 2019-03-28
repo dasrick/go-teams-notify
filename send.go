@@ -10,14 +10,14 @@ import (
 	"strings"
 )
 
-type message struct {
+type messageCard struct {
 	Title      string `json:"title"`
 	Text       string `json:"text"`
 	ThemeColor string `json:"themeColor,omitempty"`
 }
 
 // Send - will post a notification to MS Teams incomingWebhookURL
-func Send(incomingWebhookURL string, webhookMessage message) error {
+func Send(incomingWebhookURL string, webhookMessage messageCard) error {
 	// validate url
 	// needs to look like: https://outlook.office.com/webhook/xxx
 	valid, err := isValidWebhookURL(incomingWebhookURL)
