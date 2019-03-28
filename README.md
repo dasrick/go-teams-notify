@@ -9,6 +9,12 @@
 # ToDo
 
 * model of active-card ... see at [link section](#links) under adaptivecards.io
+* godoc
+* travis
+* gopkg
+* usage section
+* coveralls/codecov
+* go report
 
 # Usage
 
