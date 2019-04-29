@@ -1,4 +1,5 @@
 [![Build Status][travis-image]][travis-url]
+[![Github Tag][githubtag-image]][githubtag-url]
 
 [![Coverage Status][coveralls-image]][coveralls-url]
 [![Maintainability][codeclimate-image]][codeclimate-url]
@@ -41,6 +42,9 @@
 
 [travis-image]: https://travis-ci.org/dasrick/go-teams-notify.svg?branch=master
 [travis-url]: https://travis-ci.org/dasrick/go-teams-notify
+
+[githubtag-image]: https://img.shields.io/github/tag/dasrick/go-teams-notify.svg?style=flat
+[githubtag-url]: https://github.com/dasrick/go-teams-notify
 
 [coveralls-image]: https://coveralls.io/repos/github/dasrick/go-teams-notify/badge.svg?branch=master
 [coveralls-url]: https://coveralls.io/github/dasrick/go-teams-notify?branch=master
