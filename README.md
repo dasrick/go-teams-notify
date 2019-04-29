@@ -17,20 +17,26 @@
 
 ...
 
+# Usage
+
+To get the package, execute:
+
+```
+go get gopkg.in/dasrick/go-teams-notify.v1
+```
+
+To import this package, add the following line to your code:
+
+```
+import "gopkg.in/dasrick/go-teams-notify.v1"
+```
+
 # ToDo
 
 * model of active-card ... see at [link section](#links) under adaptivecards.io
-* godoc
-* travis
 * gopkg
 * usage section
 * coveralls/codecov
-* go report
-
-# Usage
-
-...
-
 
 # <a id="links"></a>some useful links
 
