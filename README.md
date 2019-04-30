@@ -60,13 +60,6 @@ func sendTheMessage() error {
 }
 ```
 
-# ToDo
-
-* model of active-card ... see at [link section](#links) under adaptivecards.io
-* gopkg
-* usage section
-* coveralls/codecov
-
 # <a id="links"></a>some useful links
 
 * [MS Teams - adaptive cards](https://docs.microsoft.com/de-de/outlook/actionable-messages/adaptive-card)
