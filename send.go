@@ -20,7 +20,7 @@ type teamsClient struct {
 	httpClient *http.Client
 }
 
-// NewClient create a brand new client for MS Teams notify
+// NewClient - create a brand new client for MS Teams notify
 func NewClient() (Client, error) {
 	client := teamsClient{
 		httpClient: &http.Client{
