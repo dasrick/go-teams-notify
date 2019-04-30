@@ -2,61 +2,102 @@ package goteamsnotify
 
 import (
 	"errors"
+	"net/http"
 	"net/url"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
 )
 
-//func xTestSend(t *testing.T) {
-//	var tests = []struct {
-//		reqURL string
-//		reqMsg MessageCard
-//		error  error
-//	}{
-//		// success
-//		{
-//			reqURL: "https://outlook.office.com/webhook/a42444f3-d59e-4caf-b979-6df7919460b7@04ebf399-0553-42f8-9e20-599e669641dd/IncomingWebhook/6303c4b585b34d5986ad2e0fe0ddf3e2/2051545f-8c1d-4a1c-a2cd-1b90a24a0b99",
-//			reqMsg: MessageCard{
-//				Title:      "title",
-//				Text:       "text **bold** and *italic* annd ***both*** ... some ~~strike through - doent work~~ but what happens if <br> * this<br> * is<br> * a<br> * list<br>",
-//				ThemeColor: "ff00cc",
-//			},
-//			error: nil,
-//		},
-//	}
-//
-//	for _, test := range tests {
-//		err := Send(test.reqURL, test.reqMsg)
-//		assert.IsType(t, test.error, err)
-//	}
-//}
+func TestNewClient(t *testing.T) {
+	client, err := NewClient()
+	assert.IsType(t, nil, err)
+	assert.IsType(t, &teamsClient{}, client)
+}
 
-func TestSendFailInalidWebhookURL(t *testing.T) {
+func TestTeamsClientSend(t *testing.T) {
+	// THX@Hassansin ... http://hassansin.github.io/Unit-Testing-http-client-in-Go
 	emptyMessage := NewMessageCard()
 	var tests = []struct {
-		reqURL string
-		reqMsg MessageCard
-		error  error
+		reqURL    string
+		reqMsg    MessageCard
+		resStatus int   // httpClient response status
+		resError  error // httpClient error
+		error     error // method error
 	}{
+		// invalid webhookURL - url.Parse error
 		{
-			reqURL: "ht\ttp://",
-			reqMsg: emptyMessage,
-			error:  &url.Error{},
+			reqURL:    "ht\ttp://",
+			reqMsg:    emptyMessage,
+			resStatus: 0,
+			resError:  nil,
+			error:     &url.Error{},
 		},
+		// invalid webhookURL - missing pefix in (https://outlook.office.com...) URL
 		{
-			reqURL: "",
-			reqMsg: emptyMessage,
-			error:  errors.New(""),
+			reqURL:    "",
+			reqMsg:    emptyMessage,
+			resStatus: 0,
+			resError:  nil,
+			error:     errors.New(""),
 		},
+		// invalid httpClient.Do call
 		{
-			reqURL: "http://foo.com/ctl\x80",
-			reqMsg: emptyMessage,
-			error:  errors.New(""),
+			reqURL:    "https://outlook.office.com/webhook/xxx",
+			reqMsg:    emptyMessage,
+			resStatus: 200,
+			resError:  errors.New("pling"),
+			error:     &url.Error{},
+		},
+		// invalid response status code
+		{
+			reqURL:    "https://outlook.office.com/webhook/xxx",
+			reqMsg:    emptyMessage,
+			resStatus: 400,
+			resError:  nil,
+			error:     errors.New(""),
+		},
+		// valid
+		{
+			reqURL:    "https://outlook.office.com/webhook/xxx",
+			reqMsg:    emptyMessage,
+			resStatus: 200,
+			resError:  nil,
+			error:     nil,
 		},
 	}
 	for _, test := range tests {
-		err := Send(test.reqURL, test.reqMsg)
+		client := NewTestClient(func(req *http.Request) (*http.Response, error) {
+			// Test request parameters
+			assert.Equal(t, req.URL.String(), test.reqURL)
+			return &http.Response{
+				StatusCode: test.resStatus,
+				// Send response to be tested
+				//Body: ioutil.NopCloser(bytes.NewBufferString(`OK`)),
+				// Must be set to non-nil value or it panics
+				Header: make(http.Header),
+			}, test.resError
+		})
+		c := &teamsClient{httpClient: client}
+
+		err := c.Send(test.reqURL, test.reqMsg)
 		assert.IsType(t, test.error, err)
+	}
+}
+
+// helper for testing --------------------------------------------------------------------------------------------------
+
+// RoundTripFunc .
+type RoundTripFunc func(req *http.Request) (*http.Response, error)
+
+// RoundTrip .
+func (f RoundTripFunc) RoundTrip(req *http.Request) (*http.Response, error) {
+	return f(req)
+}
+
+//NewTestClient returns *http.Client with Transport replaced to avoid making real calls
+func NewTestClient(fn RoundTripFunc) *http.Client {
+	return &http.Client{
+		Transport: RoundTripFunc(fn),
 	}
 }

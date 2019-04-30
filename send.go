@@ -8,31 +8,48 @@ import (
 	"net/http"
 	"net/url"
 	"strings"
+	"time"
 )
 
-// MessageCard - struct of message card
-type MessageCard struct {
-	Title      string `json:"title"`
-	Text       string `json:"text"`
-	ThemeColor string `json:"themeColor,omitempty"`
+// Client - interface of MS Teams notify
+type Client interface {
+	Send(webhookURL string, webhookMessage MessageCard) error
+}
+
+type teamsClient struct {
+	httpClient *http.Client
+}
+
+// NewClient create a brand new client for MS Teams notify
+func NewClient() (Client, error) {
+	client := teamsClient{
+		httpClient: &http.Client{
+			Timeout: 5 * time.Second,
+		},
+	}
+	return &client, nil
 }
 
 // Send - will post a notification to MS Teams incomingWebhookURL
-func Send(incomingWebhookURL string, webhookMessage MessageCard) error {
+func (c teamsClient) Send(webhookURL string, webhookMessage MessageCard) error {
 	// validate url
 	// needs to look like: https://outlook.office.com/webhook/xxx
-	valid, err := isValidWebhookURL(incomingWebhookURL)
+	valid, err := isValidWebhookURL(webhookURL)
 	if valid != true {
 		return err
 	}
-
-	// ToDo set defaults - e.g. ThemeColor
-
-	// send notification
+	// prepare message
 	webhookMessageByte, _ := json.Marshal(webhookMessage)
 	webhookMessageBuffer := bytes.NewBuffer(webhookMessageByte)
-	res, err := http.Post(incomingWebhookURL, "application/json", webhookMessageBuffer)
+
+	// prepare request (error not possible)
+	req, _ := http.NewRequest("POST", webhookURL, webhookMessageBuffer)
+	req.Header.Add("Content-Type", "application/json;charset=utf-8")
+
+	// do the request
+	res, err := c.httpClient.Do(req)
 	if err != nil {
+		log.Println(err)
 		return err
 	}
 	if res.StatusCode >= 299 {
@@ -44,10 +61,19 @@ func Send(incomingWebhookURL string, webhookMessage MessageCard) error {
 	return nil
 }
 
+// MessageCard - struct of message card
+type MessageCard struct {
+	Title      string `json:"title"`
+	Text       string `json:"text"`
+	ThemeColor string `json:"themeColor,omitempty"`
+}
+
 // NewMessageCard - create new empty message card
 func NewMessageCard() MessageCard {
 	return MessageCard{}
 }
+
+// helper --------------------------------------------------------------------------------------------------------------
 
 func isValidWebhookURL(webhookURL string) (bool, error) {
 	// basic URL check
