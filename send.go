@@ -11,8 +11,8 @@ import (
 	"time"
 )
 
-// Client - interface of MS Teams notify
-type Client interface {
+// API - interface of MS Teams notify
+type API interface {
 	Send(webhookURL string, webhookMessage MessageCard) error
 }
 
@@ -21,7 +21,7 @@ type teamsClient struct {
 }
 
 // NewClient - create a brand new client for MS Teams notify
-func NewClient() (Client, error) {
+func NewClient() (API, error) {
 	client := teamsClient{
 		httpClient: &http.Client{
 			Timeout: 5 * time.Second,
