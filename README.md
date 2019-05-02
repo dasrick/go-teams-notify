@@ -31,7 +31,7 @@ To import this package, add the following line to your code:
 import "gopkg.in/dasrick/go-teams-notify.v1"
 ```
 
-And this is an example of a simple implemenatation ...
+And this is an example of a simple implementation ...
 
 ```
 import (
