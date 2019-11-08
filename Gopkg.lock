@@ -2,6 +2,14 @@
 
 
 [[projects]]
+  digest = "1:922bd72f17793b0a3392b89552680850ecced7c35fba3e1afd6fcda86d6af3fb"
+  name = "github.com/dasrick/go-teams-notify"
+  packages = ["."]
+  pruneopts = "UT"
+  revision = "bc0163bde8aac788dd03c31d2879a55b49e226d2"
+  version = "v1.1.1"
+
+[[projects]]
   digest = "1:ffe9824d294da03b391f44e1ae8281281b4afc1bdaa9588c9097785e3af10cec"
   name = "github.com/davecgh/go-spew"
   packages = ["spew"]
@@ -40,6 +48,7 @@
   analyzer-name = "dep"
   analyzer-version = 1
   input-imports = [
+    "github.com/dasrick/go-teams-notify",
     "github.com/stretchr/testify/assert",
     "github.com/stretchr/testify/mock",
   ]
