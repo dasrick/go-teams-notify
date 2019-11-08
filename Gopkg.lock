@@ -2,6 +2,14 @@
 
 
 [[projects]]
+  digest = "1:922bd72f17793b0a3392b89552680850ecced7c35fba3e1afd6fcda86d6af3fb"
+  name = "github.com/dasrick/go-teams-notify"
+  packages = ["."]
+  pruneopts = "UT"
+  revision = "bc0163bde8aac788dd03c31d2879a55b49e226d2"
+  version = "v1.1.1"
+
+[[projects]]
   digest = "1:ffe9824d294da03b391f44e1ae8281281b4afc1bdaa9588c9097785e3af10cec"
   name = "github.com/davecgh/go-spew"
   packages = ["spew"]
@@ -18,9 +26,20 @@
   version = "v1.0.0"
 
 [[projects]]
-  digest = "1:972c2427413d41a1e06ca4897e8528e5a1622894050e2f527b38ddf0f343f759"
+  digest = "1:ac83cf90d08b63ad5f7e020ef480d319ae890c208f8524622a2f3136e2686b02"
+  name = "github.com/stretchr/objx"
+  packages = ["."]
+  pruneopts = "UT"
+  revision = "477a77ecc69700c7cdeb1fa9e129548e1c1c393c"
+  version = "v0.1.1"
+
+[[projects]]
+  digest = "1:0bcc464dabcfad5393daf87c3f8142911d0f6c52569b837e91a1c15e890265f3"
   name = "github.com/stretchr/testify"
-  packages = ["assert"]
+  packages = [
+    "assert",
+    "mock",
+  ]
   pruneopts = "UT"
   revision = "ffdc059bfe9ce6a4e144ba849dbedead332c6053"
   version = "v1.3.0"
@@ -28,6 +47,10 @@
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  input-imports = ["github.com/stretchr/testify/assert"]
+  input-imports = [
+    "github.com/dasrick/go-teams-notify",
+    "github.com/stretchr/testify/assert",
+    "github.com/stretchr/testify/mock",
+  ]
   solver-name = "gps-cdcl"
   solver-version = 1

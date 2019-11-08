@@ -35,7 +35,7 @@ func (c teamsClient) Send(webhookURL string, webhookMessage MessageCard) error {
 	// validate url
 	// needs to look like: https://outlook.office.com/webhook/xxx
 	valid, err := isValidWebhookURL(webhookURL)
-	if valid != true {
+	if !valid {
 		return err
 	}
 	// prepare message
@@ -83,7 +83,7 @@ func isValidWebhookURL(webhookURL string) (bool, error) {
 	}
 	// only pass MS teams webhook URLs
 	hasPrefix := strings.HasPrefix(webhookURL, "https://outlook.office.com/webhook/")
-	if hasPrefix != true {
+	if !hasPrefix {
 		err = errors.New("unvalid ms teams webhook url")
 		return false, err
 	}
