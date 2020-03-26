@@ -22,13 +22,13 @@
 To get the package, execute:
 
 ```
-go get gopkg.in/dasrick/go-teams-notify.v1
+go get https://github.com/dasrick/go-teams-notify/v2
 ```
 
 To import this package, add the following line to your code:
 
 ```
-import "gopkg.in/dasrick/go-teams-notify.v1"
+import "github.com/dasrick/go-teams-notify/v2"
 ```
 
 And this is an example of a simple implementation ...
@@ -48,13 +48,16 @@ func sendTheMessage() error {
 	if err != nil {
 		return err
 	}
+
 	// setup webhook url
 	webhookUrl := "https://outlook.office.com/webhook/YOUR_WEBHOOK_URL_OF_TEAMS_CHANNEL"
+
 	// setup message card
 	msgCard := goteamsnotify.NewMessageCard()
 	msgCard.Title = "Hello world"
 	msgCard.Text = "Here are some examples of formatted stuff like <br> * this list itself  <br> * **bold** <br> * *italic* <br> * ***bolditalic***"
 	msgCard.ThemeColor = "#DF813D"
+
 	// firestarter
 	return mstClient.Send(webhookUrl, msgCard)
 }
