@@ -35,7 +35,7 @@ And this is an example of a simple implementation ...
 
 ```
 import (
-	"gopkg.in/dasrick/go-teams-notify.v1"
+	"github.com/dasrick/go-teams-notify/v2"
 )
 
 func main() {
