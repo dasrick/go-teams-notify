@@ -33,7 +33,7 @@ func TestTeamsClientSend(t *testing.T) {
 			resError:  nil,
 			error:     &url.Error{},
 		},
-		// invalid webhookURL - missing pefix in (https://outlook.office.com...) URL
+		// invalid webhookURL - missing prefix in webhook URL
 		{
 			reqURL:    "",
 			reqMsg:    emptyMessage,
@@ -49,6 +49,14 @@ func TestTeamsClientSend(t *testing.T) {
 			resError:  errors.New("pling"),
 			error:     &url.Error{},
 		},
+		// invalid httpClient.Do call
+		{
+			reqURL:    "https://outlook.office365.com/webhook/xxx",
+			reqMsg:    emptyMessage,
+			resStatus: 200,
+			resError:  errors.New("pling"),
+			error:     &url.Error{},
+		},
 		// invalid response status code
 		{
 			reqURL:    "https://outlook.office.com/webhook/xxx",
@@ -57,9 +65,25 @@ func TestTeamsClientSend(t *testing.T) {
 			resError:  nil,
 			error:     errors.New(""),
 		},
+		// invalid response status code
+		{
+			reqURL:    "https://outlook.office365.com/webhook/xxx",
+			reqMsg:    emptyMessage,
+			resStatus: 400,
+			resError:  nil,
+			error:     errors.New(""),
+		},
 		// valid
 		{
 			reqURL:    "https://outlook.office.com/webhook/xxx",
+			reqMsg:    emptyMessage,
+			resStatus: 200,
+			resError:  nil,
+			error:     nil,
+		},
+		// valid
+		{
+			reqURL:    "https://outlook.office365.com/webhook/xxx",
 			reqMsg:    emptyMessage,
 			resStatus: 200,
 			resError:  nil,

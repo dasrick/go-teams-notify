@@ -82,9 +82,11 @@ func isValidWebhookURL(webhookURL string) (bool, error) {
 		return false, err
 	}
 	// only pass MS teams webhook URLs
-	hasPrefix := strings.HasPrefix(webhookURL, "https://outlook.office.com/webhook/")
-	if !hasPrefix {
-		err = errors.New("unvalid ms teams webhook url")
+	switch {
+	case strings.HasPrefix(webhookURL, "https://outlook.office.com/webhook/"):
+	case strings.HasPrefix(webhookURL, "https://outlook.office365.com/webhook/"):
+	default:
+		err = errors.New("invalid ms teams webhook url")
 		return false, err
 	}
 	return true, nil
