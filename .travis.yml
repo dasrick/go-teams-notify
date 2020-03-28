@@ -13,8 +13,8 @@ before_script:
   - go get github.com/mattn/goveralls
 
 script:
-  - make lint
   - make install
+  - make lint
   - make test
   - make coverage
   - go test $(shell go list ./... | grep -v /vendor/) -race -coverprofile=coverage.txt -covermode=atomic
