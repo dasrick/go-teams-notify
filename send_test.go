@@ -10,8 +10,7 @@ import (
 )
 
 func TestNewClient(t *testing.T) {
-	client, err := NewClient()
-	assert.IsType(t, nil, err)
+	client := NewClient()
 	assert.IsType(t, &teamsClient{}, client)
 }
 
@@ -96,8 +95,6 @@ func TestTeamsClientSend(t *testing.T) {
 			assert.Equal(t, req.URL.String(), test.reqURL)
 			return &http.Response{
 				StatusCode: test.resStatus,
-				// Send response to be tested
-				//Body: ioutil.NopCloser(bytes.NewBufferString(`OK`)),
 				// Must be set to non-nil value or it panics
 				Header: make(http.Header),
 			}, test.resError
@@ -119,7 +116,7 @@ func (f RoundTripFunc) RoundTrip(req *http.Request) (*http.Response, error) {
 	return f(req)
 }
 
-//NewTestClient returns *http.API with Transport replaced to avoid making real calls
+// NewTestClient returns *http.API with Transport replaced to avoid making real calls
 func NewTestClient(fn RoundTripFunc) *http.Client {
 	return &http.Client{
 		Transport: RoundTripFunc(fn),

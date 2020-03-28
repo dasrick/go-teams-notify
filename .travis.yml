@@ -8,7 +8,7 @@ go:
   - 1.14.x
 
 before_script:
-  - go get -u golang.org/x/lint/golint
+  - curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- -b $GOPATH/bin
   - go get golang.org/x/tools/cmd/cover
   - go get github.com/mattn/goveralls
 

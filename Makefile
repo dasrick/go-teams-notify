@@ -21,9 +21,9 @@ clean: ## Remove binaries and ZIP files based on directory `./cmd/`
 	@rm -f coverage.out
 
 .PHONY: lint
-lint: ## Lint all files (via golint)
+lint: ## Lint all files (via golangci-lint)
 	@go fmt ${LIST_ALL}
-	@golint -set_exit_status ${LIST_ALL}
+	@golangci-lint run
 
 .PHONY: test
 test: clean ## Run unit tests (incl. race and coverprofile)
