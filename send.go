@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"encoding/json"
 	"errors"
-	"log"
 	"net/http"
 	"net/url"
 	"strings"
@@ -52,7 +51,6 @@ func (c teamsClient) Send(webhookURL string, webhookMessage MessageCard) error {
 	}
 	if res.StatusCode >= 299 {
 		err = errors.New("error on notification: " + res.Status)
-		log.Println(err)
 		return err
 	}
 
