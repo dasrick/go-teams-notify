@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"encoding/json"
 	"errors"
-	"log"
 	"net/http"
 	"net/url"
 	"strings"
@@ -21,13 +20,13 @@ type teamsClient struct {
 }
 
 // NewClient - create a brand new client for MS Teams notify
-func NewClient() (API, error) {
+func NewClient() API {
 	client := teamsClient{
 		httpClient: &http.Client{
 			Timeout: 5 * time.Second,
 		},
 	}
-	return &client, nil
+	return &client
 }
 
 // Send - will post a notification to MS Teams incomingWebhookURL
@@ -52,7 +51,6 @@ func (c teamsClient) Send(webhookURL string, webhookMessage MessageCard) error {
 	}
 	if res.StatusCode >= 299 {
 		err = errors.New("error on notification: " + res.Status)
-		log.Println(err)
 		return err
 	}
 
