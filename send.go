@@ -33,7 +33,6 @@ func NewClient() (API, error) {
 // Send - will post a notification to MS Teams incomingWebhookURL
 func (c teamsClient) Send(webhookURL string, webhookMessage MessageCard) error {
 	// validate url
-	// needs to look like: https://outlook.office.com/webhook/xxx
 	valid, err := isValidWebhookURL(webhookURL)
 	if !valid {
 		return err
@@ -49,7 +48,6 @@ func (c teamsClient) Send(webhookURL string, webhookMessage MessageCard) error {
 	// do the request
 	res, err := c.httpClient.Do(req)
 	if err != nil {
-		log.Println(err)
 		return err
 	}
 	if res.StatusCode >= 299 {
