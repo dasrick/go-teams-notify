@@ -44,10 +44,7 @@ func main() {
 
 func sendTheMessage() error {
 	// init the client
-	mstClient, err := goteamsnotify.NewClient()
-	if err != nil {
-		return err
-	}
+	mstClient := goteamsnotify.NewClient()
 
 	// setup webhook url
 	webhookUrl := "https://outlook.office.com/webhook/YOUR_WEBHOOK_URL_OF_TEAMS_CHANNEL"
@@ -58,7 +55,7 @@ func sendTheMessage() error {
 	msgCard.Text = "Here are some examples of formatted stuff like <br> * this list itself  <br> * **bold** <br> * *italic* <br> * ***bolditalic***"
 	msgCard.ThemeColor = "#DF813D"
 
-	// firestarter
+	// send
 	return mstClient.Send(webhookUrl, msgCard)
 }
 ```

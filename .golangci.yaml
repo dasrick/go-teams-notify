@@ -24,7 +24,7 @@ linters-settings:
 
   gocognit:
     # minimal code complexity to report, 30 by default (but we recommend 10-20)
-    min-complexity: 11
+    min-complexity: 10
 
   gocyclo:
     # minimal code complexity to report, 30 by default (but we recommend 10-20)
@@ -58,9 +58,9 @@ linters-settings:
 
   whitespace:
     # Enforces newlines (or comments) after every multi-line if statement
-    multi-if: false
+    multi-if: true
     # Enforces newlines (or comments) after every multi-line function signature
-    multi-func: false
+    multi-func: true
 
 issues:
   # Not using default exclusions because we want to require comments on public
