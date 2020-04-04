@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"errors"
+	"fmt"
 	"net/http"
 	"net/url"
 	"strings"
@@ -29,19 +30,20 @@ func NewClient() API {
 	return &client
 }
 
-// Send - will post a notification to MS Teams incomingWebhookURL
+// Send - will post a notification to MS Teams webhook URL
 func (c teamsClient) Send(webhookURL string, webhookMessage MessageCard) error {
-	// validate url
-	valid, err := isValidWebhookURL(webhookURL)
-	if !valid {
+
+	// Validate input data
+	if valid, err := IsValidInput(webhookMessage, webhookURL); !valid {
 		return err
 	}
+
 	// prepare message
 	webhookMessageByte, _ := json.Marshal(webhookMessage)
 	webhookMessageBuffer := bytes.NewBuffer(webhookMessageByte)
 
 	// prepare request (error not possible)
-	req, _ := http.NewRequest("POST", webhookURL, webhookMessageBuffer)
+	req, _ := http.NewRequest(http.MethodPost, webhookURL, webhookMessageBuffer)
 	req.Header.Add("Content-Type", "application/json;charset=utf-8")
 
 	// do the request
@@ -57,21 +59,30 @@ func (c teamsClient) Send(webhookURL string, webhookMessage MessageCard) error {
 	return nil
 }
 
-// MessageCard - struct of message card
-type MessageCard struct {
-	Title      string `json:"title"`
-	Text       string `json:"text"`
-	ThemeColor string `json:"themeColor,omitempty"`
-}
-
-// NewMessageCard - create new empty message card
-func NewMessageCard() MessageCard {
-	return MessageCard{}
-}
-
 // helper --------------------------------------------------------------------------------------------------------------
 
-func isValidWebhookURL(webhookURL string) (bool, error) {
+// IsValidInput is a validation "wrapper" function. This function is intended
+// to run current validation checks and offer easy extensibility for future
+// validation requirements.
+func IsValidInput(webhookMessage MessageCard, webhookURL string) (bool, error) {
+
+	// validate url
+	if valid, err := IsValidWebhookURL(webhookURL); !valid {
+		return false, err
+	}
+
+	// validate message
+	if valid, err := IsValidMessageCard(webhookMessage); !valid {
+		return false, err
+	}
+
+	return true, nil
+
+}
+
+// IsValidWebhookURL performs validation checks on the webhook URL used to
+// submit messages to Microsoft Teams.
+func IsValidWebhookURL(webhookURL string) (bool, error) {
 	// basic URL check
 	_, err := url.Parse(webhookURL)
 	if err != nil {
@@ -86,4 +97,19 @@ func isValidWebhookURL(webhookURL string) (bool, error) {
 		return false, err
 	}
 	return true, nil
+}
+
+// IsValidMessageCard performs validation/checks for known issues with
+// MessardCard values.
+func IsValidMessageCard(webhookMessage MessageCard) (bool, error) {
+
+	if (webhookMessage.Text == "") && (webhookMessage.Summary == "") {
+		// This scenario results in:
+		// 400 Bad Request
+		// Summary or Text is required.
+		return false, fmt.Errorf("invalid message card: summary or text field is required")
+	}
+
+	return true, nil
+
 }
