@@ -32,7 +32,6 @@ func NewClient() API {
 
 // Send - will post a notification to MS Teams webhook URL
 func (c teamsClient) Send(webhookURL string, webhookMessage MessageCard) error {
-
 	// Validate input data
 	if valid, err := IsValidInput(webhookMessage, webhookURL); !valid {
 		return err
@@ -65,7 +64,6 @@ func (c teamsClient) Send(webhookURL string, webhookMessage MessageCard) error {
 // to run current validation checks and offer easy extensibility for future
 // validation requirements.
 func IsValidInput(webhookMessage MessageCard, webhookURL string) (bool, error) {
-
 	// validate url
 	if valid, err := IsValidWebhookURL(webhookURL); !valid {
 		return false, err
@@ -77,7 +75,6 @@ func IsValidInput(webhookMessage MessageCard, webhookURL string) (bool, error) {
 	}
 
 	return true, nil
-
 }
 
 // IsValidWebhookURL performs validation checks on the webhook URL used to
@@ -102,7 +99,6 @@ func IsValidWebhookURL(webhookURL string) (bool, error) {
 // IsValidMessageCard performs validation/checks for known issues with
 // MessardCard values.
 func IsValidMessageCard(webhookMessage MessageCard) (bool, error) {
-
 	if (webhookMessage.Text == "") && (webhookMessage.Summary == "") {
 		// This scenario results in:
 		// 400 Bad Request
@@ -111,5 +107,4 @@ func IsValidMessageCard(webhookMessage MessageCard) (bool, error) {
 	}
 
 	return true, nil
-
 }

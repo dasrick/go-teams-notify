@@ -16,7 +16,8 @@ func TestNewClient(t *testing.T) {
 
 func TestTeamsClientSend(t *testing.T) {
 	// THX@Hassansin ... http://hassansin.github.io/Unit-Testing-http-client-in-Go
-	emptyMessage := NewMessageCard()
+	simpleMsgCard := NewMessageCard()
+	simpleMsgCard.Text = "Hello World"
 	var tests = []struct {
 		reqURL    string
 		reqMsg    MessageCard
@@ -27,7 +28,7 @@ func TestTeamsClientSend(t *testing.T) {
 		// invalid webhookURL - url.Parse error
 		{
 			reqURL:    "ht\ttp://",
-			reqMsg:    emptyMessage,
+			reqMsg:    simpleMsgCard,
 			resStatus: 0,
 			resError:  nil,
 			error:     &url.Error{},
@@ -35,7 +36,7 @@ func TestTeamsClientSend(t *testing.T) {
 		// invalid webhookURL - missing prefix in webhook URL
 		{
 			reqURL:    "",
-			reqMsg:    emptyMessage,
+			reqMsg:    simpleMsgCard,
 			resStatus: 0,
 			resError:  nil,
 			error:     errors.New(""),
@@ -43,7 +44,7 @@ func TestTeamsClientSend(t *testing.T) {
 		// invalid httpClient.Do call
 		{
 			reqURL:    "https://outlook.office.com/webhook/xxx",
-			reqMsg:    emptyMessage,
+			reqMsg:    simpleMsgCard,
 			resStatus: 200,
 			resError:  errors.New("pling"),
 			error:     &url.Error{},
@@ -51,7 +52,7 @@ func TestTeamsClientSend(t *testing.T) {
 		// invalid httpClient.Do call
 		{
 			reqURL:    "https://outlook.office365.com/webhook/xxx",
-			reqMsg:    emptyMessage,
+			reqMsg:    simpleMsgCard,
 			resStatus: 200,
 			resError:  errors.New("pling"),
 			error:     &url.Error{},
@@ -59,7 +60,7 @@ func TestTeamsClientSend(t *testing.T) {
 		// invalid response status code
 		{
 			reqURL:    "https://outlook.office.com/webhook/xxx",
-			reqMsg:    emptyMessage,
+			reqMsg:    simpleMsgCard,
 			resStatus: 400,
 			resError:  nil,
 			error:     errors.New(""),
@@ -67,7 +68,7 @@ func TestTeamsClientSend(t *testing.T) {
 		// invalid response status code
 		{
 			reqURL:    "https://outlook.office365.com/webhook/xxx",
-			reqMsg:    emptyMessage,
+			reqMsg:    simpleMsgCard,
 			resStatus: 400,
 			resError:  nil,
 			error:     errors.New(""),
@@ -75,7 +76,7 @@ func TestTeamsClientSend(t *testing.T) {
 		// valid
 		{
 			reqURL:    "https://outlook.office.com/webhook/xxx",
-			reqMsg:    emptyMessage,
+			reqMsg:    simpleMsgCard,
 			resStatus: 200,
 			resError:  nil,
 			error:     nil,
@@ -83,7 +84,7 @@ func TestTeamsClientSend(t *testing.T) {
 		// valid
 		{
 			reqURL:    "https://outlook.office365.com/webhook/xxx",
-			reqMsg:    emptyMessage,
+			reqMsg:    simpleMsgCard,
 			resStatus: 200,
 			resError:  nil,
 			error:     nil,
