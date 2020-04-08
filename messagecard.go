@@ -143,12 +143,10 @@ type MessageCard struct {
 // MessageCard. Validation is performed to reject invalid values with an error
 // message.
 func (mc *MessageCard) AddSection(section ...*MessageCardSection) error {
-
 	for _, s := range section {
-
 		// bail if a completely nil section provided
 		if s == nil {
-			return fmt.Errorf("AddSection: nil MessageCardSection received")
+			return fmt.Errorf("func AddSection: nil MessageCardSection received")
 		}
 
 		// Perform validation of all MessageCardSection fields in an effort to
@@ -160,14 +158,13 @@ func (mc *MessageCard) AddSection(section ...*MessageCardSection) error {
 		// field in the output JSON.
 		// See also https://github.com/golang/go/issues/11939
 		switch {
-
 		// If any of these cases trigger, skip over the `default` case
 		// statement and add the section.
 		case s.Images != nil:
 		case s.Facts != nil:
 		case s.HeroImage != nil:
-		case s.StartGroup != false:
-		case s.Markdown != false:
+		case s.StartGroup:
+		case s.Markdown:
 		case s.ActivityText != "":
 		case s.ActivitySubtitle != "":
 		case s.ActivityTitle != "":
@@ -180,19 +177,15 @@ func (mc *MessageCard) AddSection(section ...*MessageCardSection) error {
 		}
 
 		mc.Sections = append(mc.Sections, s)
-
 	}
 
 	return nil
-
 }
 
 // AddFact adds one or many additional MessageCardSectionFact values to a
 // MessageCardSection
 func (mcs *MessageCardSection) AddFact(fact ...MessageCardSectionFact) error {
-
 	for _, f := range fact {
-
 		if f.Name == "" {
 			return fmt.Errorf("empty Name field received for new fact: %+v", f)
 		}
@@ -203,13 +196,11 @@ func (mcs *MessageCardSection) AddFact(fact ...MessageCardSectionFact) error {
 	}
 
 	return nil
-
 }
 
 // AddFactFromKeyValue accepts a key and slice of values and converts them to
 // MessageCardSectionFact values
 func (mcs *MessageCardSection) AddFactFromKeyValue(key string, values ...string) error {
-
 	// validate arguments
 
 	if key == "" {
@@ -238,7 +229,6 @@ func (mcs *MessageCardSection) AddFactFromKeyValue(key string, values ...string)
 // AddImage adds an image to a MessageCard section. These images are used to
 // provide a photo gallery inside a MessageCard section.
 func (mcs *MessageCardSection) AddImage(sectionImage ...MessageCardSectionImage) error {
-
 	for _, img := range sectionImage {
 		if img.Image == "" {
 			return fmt.Errorf("cannot add empty image URL")
@@ -248,8 +238,7 @@ func (mcs *MessageCardSection) AddImage(sectionImage ...MessageCardSectionImage)
 			return fmt.Errorf("cannot add empty image title")
 		}
 
-		mcs.Images = append(mcs.Images, &img)
-
+		mcs.Images = append(mcs.Images, &img) // nolint:scopelint
 	}
 
 	return nil
@@ -259,7 +248,6 @@ func (mcs *MessageCardSection) AddImage(sectionImage ...MessageCardSectionImage)
 // arguments. This image is used as the centerpiece or banner of a message
 // card.
 func (mcs *MessageCardSection) AddHeroImageStr(imageURL string, imageTitle string) error {
-
 	if imageURL == "" {
 		return fmt.Errorf("cannot add empty hero image URL")
 	}
@@ -281,14 +269,12 @@ func (mcs *MessageCardSection) AddHeroImageStr(imageURL string, imageTitle strin
 
 	// our validation checks didn't find any problems
 	return nil
-
 }
 
 // AddHeroImage adds a Hero Image to a MessageCard section using a
 // MessageCardSectionImage argument. This image is used as the centerpiece or
 // banner of a message card.
 func (mcs *MessageCardSection) AddHeroImage(heroImage MessageCardSectionImage) error {
-
 	if heroImage.Image == "" {
 		return fmt.Errorf("cannot add empty hero image URL")
 	}
@@ -301,13 +287,11 @@ func (mcs *MessageCardSection) AddHeroImage(heroImage MessageCardSectionImage) e
 
 	// our validation checks didn't find any problems
 	return nil
-
 }
 
 // NewMessageCard creates a new message card with fields required by the
 // legacy message card format already predefined
 func NewMessageCard() MessageCard {
-
 	// define expected values to meet Office 365 Connector card requirements
 	// https://docs.microsoft.com/en-us/outlook/actionable-messages/message-card-reference#card-fields
 	msgCard := MessageCard{
