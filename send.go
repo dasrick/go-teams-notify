@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"io/ioutil"
 	"net/http"
 	"net/url"
 	"strings"
@@ -32,6 +33,9 @@ func NewClient() API {
 
 // Send - will post a notification to MS Teams webhook URL
 func (c teamsClient) Send(webhookURL string, webhookMessage MessageCard) error {
+
+	// logger.Printf("Send: Webhook message received: %#v\n", webhookMessage)
+
 	// Validate input data
 	if valid, err := IsValidInput(webhookMessage, webhookURL); !valid {
 		return err
@@ -41,6 +45,15 @@ func (c teamsClient) Send(webhookURL string, webhookMessage MessageCard) error {
 	webhookMessageByte, _ := json.Marshal(webhookMessage)
 	webhookMessageBuffer := bytes.NewBuffer(webhookMessageByte)
 
+	// JSON data before formatting changes
+	//logger.Printf("Send: %+v\n", string(webhookMessageByte))
+
+	var prettyJSON bytes.Buffer
+	if err := json.Indent(&prettyJSON, webhookMessageByte, "", "\t"); err != nil {
+		return err
+	}
+	// logger.Printf("Send: Payload for Microsoft Teams: \n\n%v\n\n", prettyJSON.String())
+
 	// prepare request (error not possible)
 	req, _ := http.NewRequest(http.MethodPost, webhookURL, webhookMessageBuffer)
 	req.Header.Add("Content-Type", "application/json;charset=utf-8")
@@ -48,12 +61,37 @@ func (c teamsClient) Send(webhookURL string, webhookMessage MessageCard) error {
 	// do the request
 	res, err := c.httpClient.Do(req)
 	if err != nil {
+		// logger.Println(err)
 		return err
 	}
+
+	// Make sure that we close the response body once we're done with it
+	defer res.Body.Close()
+
+	// Get the response body, then convert to string for use with extended
+	// error messages
+	responseData, err := ioutil.ReadAll(res.Body)
+	if err != nil {
+		// logger.Println(err)
+		return err
+	}
+
 	if res.StatusCode >= 299 {
-		err = errors.New("error on notification: " + res.Status)
+
+		// 400 Bad Response is likely an indicator that we failed to provide a
+		// required field in our JSON payload. For example, when leaving out
+		// the top level MessageCard Summary or Text field, the remote API
+		// returns "Summary or Text is required." as a text string. We include
+		// that response text in the error message that we return to the
+		// caller.
+
+		err = fmt.Errorf("error on notification: %v, %q", res.Status, string(responseData))
+		// logger.Println(err)
 		return err
 	}
+
+	// log the response string
+	// logger.Printf("Send: Response string from Microsoft Teams API: %v\n", string(responseData))
 
 	return nil
 }
