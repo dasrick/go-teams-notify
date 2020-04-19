@@ -86,7 +86,6 @@ func IsValidInput(webhookMessage MessageCard, webhookURL string) (bool, error) {
 // IsValidWebhookURL performs validation checks on the webhook URL used to
 // submit messages to Microsoft Teams.
 func IsValidWebhookURL(webhookURL string) (bool, error) {
-
 	switch {
 	case strings.HasPrefix(webhookURL, WebhookURLOfficecomPrefix):
 	case strings.HasPrefix(webhookURL, WebhookURLOffice365Prefix):
