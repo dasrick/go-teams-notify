@@ -193,6 +193,7 @@ func (mcs *MessageCardSection) AddFact(fact ...MessageCardSectionFact) error {
 		if f.Value == "" {
 			return fmt.Errorf("empty Name field received for new fact: %+v", f)
 		}
+		mcs.Facts = append(mcs.Facts, f)
 	}
 
 	return nil
