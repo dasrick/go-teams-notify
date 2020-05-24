@@ -195,6 +195,8 @@ func (mcs *MessageCardSection) AddFact(fact ...MessageCardSectionFact) error {
 		}
 	}
 
+	mcs.Facts = append(mcs.Facts, fact...)
+
 	return nil
 }
 
