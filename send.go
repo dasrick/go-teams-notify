@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"net/http"
 	"net/url"
+	"regexp"
 	"strings"
 	"time"
 )
@@ -90,6 +91,7 @@ func IsValidWebhookURL(webhookURL string) (bool, error) {
 	switch {
 	case strings.HasPrefix(webhookURL, WebhookURLOfficecomPrefix):
 	case strings.HasPrefix(webhookURL, WebhookURLOffice365Prefix):
+	case isCustomOfficeWebhook(webhookURL):
 	default:
 		u, err := url.Parse(webhookURL)
 		if err != nil {
@@ -110,6 +112,11 @@ func IsValidWebhookURL(webhookURL string) (bool, error) {
 	}
 
 	return true, nil
+}
+
+func isCustomOfficeWebhook(webhookURL string) bool {
+	validWebHook := regexp.MustCompile("^https://[a-z0-9-_]+\\.webhook\\.office\\.com/webhookb2/.*$")
+	return validWebHook.MatchString(webhookURL)
 }
 
 // IsValidMessageCard performs validation/checks for known issues with
