@@ -15,7 +15,13 @@
 
 > A package to send messages to Microsoft Teams (channels)
 
-...
+***
+
+**This project is no longer being actively developed or maintained. Please use the successor.**
+
+[https://github.com/atc0005/go-teams-notify](https://github.com/atc0005/go-teams-notify)
+
+***
 
 # Usage
 
